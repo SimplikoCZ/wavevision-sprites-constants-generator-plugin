@@ -7,7 +7,25 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const handlebars_1 = require("handlebars");
 const declare = '<?php declare (strict_types = 1);';
-const template = (0, handlebars_1.compile)(fs_1.default.readFileSync(path_1.default.resolve(__dirname, '..', 'template.hbs')).toString());
+const template = (0, handlebars_1.compile)(`{{#if useStrictTypes}}
+{{{declare}}}
+
+{{/if}}
+namespace {{namespace}};
+
+{{#if useStaticClass}}use Nette\\StaticClass;{{/if}}
+
+class {{className}}
+{
+
+\t{{#if useStaticClass}}use StaticClass;{{/if}}
+
+{{#each constants}}
+\tpublic const {{this.name}} = '{{this.value}}';
+
+{{/each}}
+}
+`);
 const makeFile = (className, constants, options) => {
     const { namespace, output, useStaticClass, useStrictTypes } = options;
     if (!fs_1.default.existsSync(output)) {

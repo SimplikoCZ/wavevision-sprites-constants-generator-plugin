@@ -7,7 +7,25 @@ import { Options } from './types';
 
 const declare = '<?php declare (strict_types = 1);';
 const template = compile(
-  fs.readFileSync(path.resolve(__dirname, '..', 'template.hbs')).toString(),
+  `{{#if useStrictTypes}}
+{{{declare}}}
+
+{{/if}}
+namespace {{namespace}};
+
+{{#if useStaticClass}}use Nette\\StaticClass;{{/if}}
+
+class {{className}}
+{
+
+\t{{#if useStaticClass}}use StaticClass;{{/if}}
+
+{{#each constants}}
+\tpublic const {{this.name}} = '{{this.value}}';
+
+{{/each}}
+}
+`,
 );
 
 const makeFile = (
