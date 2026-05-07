@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import $ from 'cheerio';
+import { load } from 'cheerio';
 
 import makeFile from './makeFile';
 import { filterClassName } from './utils';
@@ -49,12 +49,12 @@ class Generator {
     sprite: string,
     source: string,
   ): string => {
-    const $content = $.load(source);
+    const $content = load(source);
     const baseName = this.getSpriteName(sprite);
     const className = filterClassName(baseName);
     const constants: Array<{ name: string; value: string }> = [];
     $content('svg defs symbol').each((index, element) => {
-      const value = $(element).attr('id');
+      const value = $content(element).attr('id');
       if (!value) {
         throw new Error('SVG symbol ID is missing.');
       }

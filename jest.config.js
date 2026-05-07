@@ -13,10 +13,7 @@ module.exports = {
     '!src/**/*.d.ts',
     '!**/node_modules/**',
   ],
-  preset: 'ts-jest',
-  globals: {
-    'ts-jest': {
-      isolatedModules: true,
-    },
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
   },
 };

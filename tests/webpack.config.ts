@@ -1,7 +1,7 @@
 import { basename, dirname } from 'path';
 
 import SVGSpriteLoaderPlugin from 'svg-sprite-loader/plugin';
-import { Configuration } from 'webpack';
+import { Configuration, WebpackPluginInstance } from 'webpack';
 
 import SpritesConstantsGeneratorPlugin from '../src/SpritesConstantsGeneratorPlugin';
 
@@ -51,7 +51,7 @@ const config: Configuration = {
     ],
   },
   plugins: [
-    new SVGSpriteLoaderPlugin({ plainSprite: true }),
+    new SVGSpriteLoaderPlugin({ plainSprite: true }) as unknown as WebpackPluginInstance,
     new SpritesConstantsGeneratorPlugin({
       namespace: 'App\\Sprites',
       output: SPRITES_DIR,

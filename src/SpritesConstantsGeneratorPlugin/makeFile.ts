@@ -29,7 +29,7 @@ const makeFile = (
       useStaticClass,
       useStrictTypes,
     }),
-    'UTF8',
+    'utf8',
   );
   return `${namespace}\\${className} created`;
 };

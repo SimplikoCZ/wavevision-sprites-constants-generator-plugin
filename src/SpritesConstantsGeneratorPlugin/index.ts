@@ -1,4 +1,5 @@
-import { resolve } from 'path';
+import { readFileSync } from 'fs';
+import { join, resolve } from 'path';
 
 import webpack from 'webpack';
 import { validate } from 'schema-utils';
@@ -31,7 +32,7 @@ class SpritesConstantsGeneratorPlugin {
 
   private readonly options: Options;
 
-  private logger: webpack.Logger;
+  private logger!: ReturnType<webpack.Compilation['getLogger']>;
 
   public readonly apply = (compiler: webpack.Compiler): void => {
     compiler.hooks.thisCompilation.tap(NAME, compilation => {
@@ -41,7 +42,7 @@ class SpritesConstantsGeneratorPlugin {
   };
 
   private readonly run = (
-    compilation: webpack.compilation.Compilation,
+    compilation: webpack.Compilation,
     callback: () => void,
   ): void => {
     if (this.shouldRun(compilation)) {
@@ -51,26 +52,29 @@ class SpritesConstantsGeneratorPlugin {
         messages.forEach(m => this.logger.info(m));
         this.logger.groupEnd();
       } catch (e) {
-        compilation.errors.push(`${NAME}: ${e.message}`);
+        const err = new Error(`${NAME}: ${(e as Error).message}`);
+        compilation.errors.push(err as webpack.WebpackError);
       }
     }
     callback();
   };
 
   private readonly getAssets = (
-    compilation: webpack.compilation.Compilation,
+    compilation: webpack.Compilation,
   ): Assets => {
     const assets: Assets = {};
+    const outputPath = compilation.outputOptions.path!;
     for (const asset in compilation.assets) {
       if (this.options.sprites.includes(asset)) {
-        assets[asset] = compilation.assets[asset];
+        const filePath = join(outputPath, asset);
+        assets[asset] = { source: () => readFileSync(filePath, 'utf8') };
       }
     }
     return assets;
   };
 
   private readonly shouldRun = (
-    compilation: webpack.compilation.Compilation,
+    compilation: webpack.Compilation,
   ): boolean => {
     if (this.options.ignoreErrors === false) {
       return compilation.errors.length === 0;
