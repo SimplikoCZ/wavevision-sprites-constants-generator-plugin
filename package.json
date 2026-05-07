@@ -36,7 +36,7 @@
     "@types/json-schema": "^7.0.15",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/node": "^22",
-    "@types/svg-sprite-loader": "^3.9.9",
+    "@types/svg-spritemap-webpack-plugin": "^4.4.4",
     "@types/webpack": "^5.28.5",
     "@types/webpack-env": "^1.18.8",
     "@wavevision/coding-standard": "^6.0.2",
@@ -44,7 +44,8 @@
     "eslint-plugin-jest": "^29",
     "jest": "^29",
     "npm-run-all": "^4.1.5",
-    "svg-sprite-loader": "^6.0.11",
+    "svg-spritemap-webpack-plugin": "^4.7.0",
+    "svgo": "^4.0.1",
     "ts-jest": "^29.4.9",
     "ts-loader": "^9.5.7",
     "ts-node": "^10.9.2",
@@ -54,8 +55,6 @@
   },
   "peerDependencies": {
     "@types/node": "^22",
-    "svg-sprite-loader": "^6",
-    "svgxuse": "^1",
     "webpack": "^5"
   },
   "scripts": {

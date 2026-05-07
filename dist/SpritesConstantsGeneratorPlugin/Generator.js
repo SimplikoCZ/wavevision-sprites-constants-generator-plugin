@@ -34,7 +34,7 @@ class Generator {
             const baseName = this.getSpriteName(sprite);
             const className = (0, utils_1.filterClassName)(baseName);
             const constants = [];
-            $content('svg defs symbol').each((index, element) => {
+            $content('svg symbol').each((index, element) => {
                 const value = $content(element).attr('id');
                 if (!value) {
                     throw new Error('SVG symbol ID is missing.');

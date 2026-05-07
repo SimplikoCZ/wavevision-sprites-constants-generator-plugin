@@ -1,11 +1,11 @@
-import { basename, dirname } from 'path';
+import { resolve } from 'path';
 
-import SVGSpriteLoaderPlugin from 'svg-sprite-loader/plugin';
+import SVGSpritemapPlugin from 'svg-spritemap-webpack-plugin';
 import { Configuration, WebpackPluginInstance } from 'webpack';
 
 import SpritesConstantsGeneratorPlugin from '../src/SpritesConstantsGeneratorPlugin';
 
-import { ENTRY, OUTPUT_PATH, SPRITES_DIR } from './constants';
+import { OUTPUT_PATH, SPRITES_DIR } from './constants';
 
 const images = 'images';
 const sprites = ['icons'];
@@ -14,7 +14,7 @@ const test = 'test';
 const config: Configuration = {
   mode: 'production',
   entry: {
-    index: ENTRY,
+    index: resolve(__dirname, 'assets', 'index.ts'),
   },
   output: {
     path: OUTPUT_PATH,
@@ -31,27 +31,29 @@ const config: Configuration = {
           transpileOnly: true,
         },
       },
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: 'svg-sprite-loader',
-            options: {
-              extract: true,
-              runtimeGenerator:
-                SpritesConstantsGeneratorPlugin.runtimeGenerator,
-              spriteFilename: (pathname: string): string =>
-                `${images}/${test}-${basename(dirname(pathname))}.svg`,
-              symbolId: `${test}-[folder]-[name]`,
-            },
-          },
-          SpritesConstantsGeneratorPlugin.loader,
-        ],
-      },
     ],
   },
   plugins: [
-    new SVGSpriteLoaderPlugin({ plainSprite: true }) as unknown as WebpackPluginInstance,
+    ...sprites.map(
+      sprite =>
+        new SVGSpritemapPlugin(
+          resolve(__dirname, `assets/${images}/${sprite}/*.svg`),
+          {
+            output: {
+              filename: `${images}/${test}-${sprite}.svg`,
+              svgo: false,
+            },
+            sprite: {
+              prefix: `${test}-${sprite}-`,
+              generate: {
+                use: false,
+                view: false,
+                title: false,
+              },
+            },
+          },
+        ) as unknown as WebpackPluginInstance,
+    ),
     new SpritesConstantsGeneratorPlugin({
       namespace: 'App\\Sprites',
       output: SPRITES_DIR,
